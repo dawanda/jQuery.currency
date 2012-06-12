@@ -1,0 +1,50 @@
+* Config
+var config = module.exports;
+
+config.client = {
+    "environment": "browsers",
+    "load": ["/buster/jstestdriver-adapter.js", "my-test.js"],
+    "resources": [{
+        "path": "/buster/jstestdriver-adapter.js",
+        "file": "../node_modules/buster-jstestdriver/lib/buster-jstestdriver.js"
+    }, {
+        "path": "/proxy",
+        "backend": "http://localhost:9087"
+    }]
+};
+* TODO $ buster test --config buster.json --server localhost:1111
+  * Server running?
+    * No
+      * Is the specified server local?
+        * Yes: Start server
+        * No: process.exit(1) "Server is unavailable"
+    * Does the server have connected clients?
+      * No
+        * Is phantomjs available?
+          * Yes: Capture headless with phantom
+          * No: process.exit(1) "No clients connected, add one by capturing a browser blabla" (Eventually: capture node+env.js)
+    * Start session
+* TODO $ buster test --config buster.json
+Same as above, assume localhost:1111
+* TODO $ buster test --env node / $ buster test --node
+Runs tests with node.js. Reads configuration
+
+var config = module.exports;
+
+config.server = {
+    "environment": "node",
+    "load": ["test/**/*-test.js", "spec/**/*-spec.js"]
+};
+* TODO $ buster test --env node test/my-test.js / $ buster test --node test/my-test.js
+Runs tests with node.js. Does not read configuration.
+* TODO $ buster test --env node
+Runs tests with node.js. Reads configuration.
+* TODO $ buster test --env node,browsers --config buster.json
+Runs all node and browser tests. Reports them all in one reporter.
+* TODO $ buster test
+  * Does configuration exist? **/buster.json
+    * No: Generate with `buster configure`
+    * Yes: Run as `buster test --env browsers --config found-config.json`
+* Other options
+** --reporter
+** -v -vv -vvv (log levels)
