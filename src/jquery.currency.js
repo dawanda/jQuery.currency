@@ -102,7 +102,7 @@
               amount: amount,
               currency: $elem.data("currency") || $elem.find(".currency").text(),
               unit: $elem.data("unit") || $elem.find(".unit").text()
-            }
+            };
           }
         },
         update: function( $elem, data ) {
