@@ -21,14 +21,14 @@
           }
         });
         $(".convert").click(function() {
-          $(".money").currency( $(this).data("to-currency") );
+          $(".currencies").currency( $(this).data("to-currency") );
         });
       });
     </script>
   </head>
   <body>
     <h1>jQuery.currency Demo</h1>
-    <p>
+    <p class="currencies">
       <span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">123.45</span> <abbr class="currency">EUR</abbr></span>
       <br>
       <span class="money"><abbr class="unit">&pound;</abbr> <span class="amount">543.21</span> <abbr class="currency">GBP</abbr></span>
@@ -50,8 +50,8 @@
     <p>
       Configure once, then run as many times you want:
       <pre><code>
+// Configure rates and default settings
 jQuery.currency.configure({
-  // Configure rates and default settings
   rates: {
     // Object containing exchange rates from the base currency (EUR by default)
     "USD": 1.2491,
@@ -59,7 +59,8 @@ jQuery.currency.configure({
   }
 });
 
-jQuery( ... ).currency("USD"); // Convert to USD
+// Convert all currencies in element with id="container" to USD
+jQuery("#container").currency("USD");
       </code></pre>
   </p>
   </body>

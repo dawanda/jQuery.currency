@@ -5,6 +5,7 @@
         beforeConvert: false,
         afterConvert: false,
         baseCurrency: "EUR",
+        moneyClass: "money",
         symbols: {
           "ALL": 'Lek',
           "ARS": '$',
@@ -124,14 +125,14 @@
         } else {
           return {
             amount: amount,
-            currency: $elem.find(".currency").attr("title") || $elem.find(".currency").text(),
+            currency: $elem.find(".currency").text(),
             unit: $elem.find(".unit").text()
           }
         }
       },
       update: function( $elem, data ) {
         $elem.find(".amount").html( $.currency.formatNumber( data.amount ) );
-        $elem.find(".currency").html( data.currency ).attr( "title", data.currency );
+        $elem.find(".currency").html( data.currency );
         $elem.find(".unit").html( data.unit );
         return $elem;
       }
@@ -139,7 +140,7 @@
   });
 
   $.fn.currency = function( currency, options ) {
-    return this.each(function() {
+    this.find( "." + defaults.moneyClass ).andSelf().filter( "." + defaults.moneyClass ).each(function() {
       var convertedAmount,
           settings = $.extend( {}, settings, defaults, options ),
           self = this,
@@ -150,7 +151,7 @@
 
       if ( typeof convertedAmount === "number" ) {
         if ( $.isFunction( settings.beforeConvert ) ) {
-          settings.beforeConvert( self );
+          settings.beforeConvert( self, arguments );
         }
 
         data = {
@@ -162,9 +163,10 @@
         $.currency.update( $this, data );
       
         if ( $.isFunction( settings.afterConvert ) ) {
-          settings.afterConvert( self );
+          settings.afterConvert( self, arguments );
         }
       }
     });
+    return this;
   };
 })( jQuery );

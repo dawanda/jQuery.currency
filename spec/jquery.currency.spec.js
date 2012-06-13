@@ -41,7 +41,7 @@ describe('jquery.currency.parse', function() {
 
 describe('jquery.currency', function() {
   before(function() {
-    this.element = jQuery('<span><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">EUR</abbr></span>').appendTo(jQuery('body'));
+    this.element = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">EUR</abbr></span>').appendTo(jQuery('body'));
   });
 
   it('should maintain chainability', function() {
@@ -72,7 +72,7 @@ describe('jquery.currency', function() {
 
   it('should call jQuery.currency.convert with currency taken from currency microformat, if specified', function() {
     var spy = this.spy(),
-        elem = jQuery('<span><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">XXX</abbr></span>');
+        elem = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">XXX</abbr></span>');
 
     this.stub(jQuery.currency, "getRate", function() {
       return 2;
@@ -104,7 +104,7 @@ describe('jquery.currency', function() {
       return 1;
     });
 
-    expect( this.element.currency("USD").html() ).toEqual( '<abbr class="unit">$</abbr> <span class="amount">1234.56</span> <abbr class="currency" title="USD">USD</abbr>' );
+    expect( this.element.currency("USD").html() ).toEqual( '<abbr class="unit">$</abbr> <span class="amount">1234.56</span> <abbr class="currency">USD</abbr>' );
   });
 
   it('should not change default configurations when temporary options are passed', function() {
@@ -130,7 +130,7 @@ describe('jquery.currency', function() {
   });
 
   it('should pass the not-yet-converted element to beforeConvert callback', function() {
-    var elem = jQuery('<span><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">EUR</abbr></span>');
+    var elem = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">EUR</abbr></span>');
 
     this.stub(jQuery.currency, "getRate", function() {
       return 1;
