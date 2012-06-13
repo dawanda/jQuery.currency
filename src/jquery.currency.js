@@ -89,7 +89,28 @@
           "VEF": 'Bs',
           "ZWD": 'Z$'
         },
-        rates: {}
+        rates: {},
+        formatNumber: function( number ) {
+          return number.toFixed(2);
+        },
+        parse: function( $elem ) {
+          var amount = parseFloat( $elem.data("amount") || $elem.find(".amount").text() );
+          if ( isNaN( amount ) ) {
+            return null;
+          } else {
+            return {
+              amount: amount,
+              currency: $elem.data("currency") || $elem.find(".currency").text(),
+              unit: $elem.data("unit") || $elem.find(".unit").text()
+            }
+          }
+        },
+        update: function( $elem, data ) {
+          $elem.find(".amount").html( $.currency.formatNumber( data.amount ) );
+          $elem.find(".currency").html( data.currency );
+          $elem.find(".unit").html( data.unit );
+          $elem.data( data );
+        }
       };
 
   $.extend({
@@ -115,27 +136,9 @@
       getDefaults: function() {
         return defaults;
       },
-      formatNumber: function( number ) {
-        return number.toFixed(2);
-      },
-      parse: function( $elem ) {
-        var amount = parseFloat( $elem.find(".amount").text() );
-        if ( isNaN( amount ) ) {
-          return null;
-        } else {
-          return {
-            amount: amount,
-            currency: $elem.find(".currency").text(),
-            unit: $elem.find(".unit").text()
-          }
-        }
-      },
-      update: function( $elem, data ) {
-        $elem.find(".amount").html( $.currency.formatNumber( data.amount ) );
-        $elem.find(".currency").html( data.currency );
-        $elem.find(".unit").html( data.unit );
-        return $elem;
-      }
+      formatNumber: defaults.formatNumber,
+      parse: defaults.parse,
+      update: defaults.update
     }
   });
 
