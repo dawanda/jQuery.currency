@@ -1,10 +1,10 @@
 (function($) {
-  "use strict"
+  "use strict";
 
   var defaults = {
-        format: "%s %a %c",
         beforeConvert: false,
-        defaultCurrency: "EUR",
+        afterConvert: false,
+        baseCurrency: "EUR",
         symbols: {
           "ALL": 'Lek',
           "ARS": '$',
@@ -87,13 +87,18 @@
           "UYU": '$U',
           "VEF": 'Bs',
           "ZWD": 'Z$'
-        }
+        },
+        rates: {}
       };
 
   $.extend({
     currency: {
       getRate: function( fromCurrency, toCurrency ) {
-        // This is meant to be overridden
+        var rate1 =  fromCurrency === defaults.baseCurrency ? 1 : defaults.rates[ fromCurrency ],
+            rate2 =  toCurrency === defaults.baseCurrency ? 1 : defaults.rates[ toCurrency ];
+        if ( rate1 && rate2 ) {
+          return rate2 / rate1;
+        }
       },
       convert: function( amount, fromCurrency, toCurrency ) {
         var rate = parseFloat( $.currency.getRate( fromCurrency, toCurrency ) );
@@ -102,12 +107,33 @@
       getSymbol: function( currency ) {
         return defaults.symbols[ currency ];
       },
-      overrideDefaults: function( options ) {
-        defaults = $.extend( defaults, options );
+      configure: function( configs ) {
+        defaults = $.extend( defaults, configs );
         return defaults;
       },
       getDefaults: function() {
         return defaults;
+      },
+      formatNumber: function( number ) {
+        return number.toFixed(2);
+      },
+      parse: function( $elem ) {
+        var amount = parseFloat( $elem.find(".amount").text() );
+        if ( isNaN( amount ) ) {
+          return null;
+        } else {
+          return {
+            amount: amount,
+            currency: $elem.find(".currency").attr("title") || $elem.find(".currency").text(),
+            unit: $elem.find(".unit").text()
+          }
+        }
+      },
+      update: function( $elem, data ) {
+        $elem.find(".amount").html( $.currency.formatNumber( data.amount ) );
+        $elem.find(".currency").html( data.currency ).attr( "title", data.currency );
+        $elem.find(".unit").html( data.unit );
+        return $elem;
       }
     }
   });
@@ -115,28 +141,28 @@
   $.fn.currency = function( currency, options ) {
     return this.each(function() {
       var convertedAmount,
+          settings = $.extend( {}, settings, defaults, options ),
           self = this,
           $this = $( this ),
-          data = $this.data();
+          data = $.currency.parse( $this );
 
-      options = $.extend( defaults, options );
-
-      convertedAmount = $.currency.convert( data.amount, data.currency || options.defaultCurrency, currency );
+      convertedAmount = data ? $.currency.convert( data.amount, data.currency || settings.baseCurrency, currency ) : null;
 
       if ( typeof convertedAmount === "number" ) {
-        if ( $.isFunction( options.beforeConvert ) ) {
-          options.beforeConvert( self );
+        if ( $.isFunction( settings.beforeConvert ) ) {
+          settings.beforeConvert( self );
         }
 
-        $this.data({
+        data = {
           amount: convertedAmount,
-          currency: currency
-        });
+          currency: currency,
+          unit: settings.symbol || $.currency.getSymbol( currency ) || ""
+        };
 
-        $this.html( options.format.replace( "%c", currency ).replace( "%a", convertedAmount ).replace( "%s", options.symbol || $.currency.getSymbol( currency ) || "" ) );
+        $.currency.update( $this, data );
       
-        if ( $.isFunction( options.afterConvert ) ) {
-          options.afterConvert( self );
+        if ( $.isFunction( settings.afterConvert ) ) {
+          settings.afterConvert( self );
         }
       }
     });

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jQuery.currency Demo</title>
+    <script src="../lib/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="../dist/jquery.currency.min.js"></script>
+    <style type="text/css">
+      html {
+        font-family: Helvetica, Arial, sans-serif;
+      }
+      body {
+        padding: 0 20px;
+      }
+    </style>
+    <script type="text/javascript">
+      $(function() {
+        $.currency.configure({
+          rates: {
+            "USD": 1.2491,
+            "GBP": 0.8032
+          }
+        });
+        $(".convert").click(function() {
+          $(".money").currency( $(this).data("to-currency") );
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>jQuery.currency Demo</h1>
+    <p>
+      <span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">123.45</span> <abbr class="currency">EUR</abbr></span>
+      <br>
+      <span class="money"><abbr class="unit">&pound;</abbr> <span class="amount">543.21</span> <abbr class="currency">GBP</abbr></span>
+    </p>
+    <p>
+      <button class="convert" data-to-currency="USD">Convert to USD</button>
+      <button class="convert" data-to-currency="GBP">Convert to GBP</button>
+      <button class="convert" data-to-currency="EUR">Convert to EUR</button>
+    </p>
+
+    <h3>Usage:</h3>
+    <p>
+      Expected microformat is like:
+      <pre><code>
+&lt;abbr class="unit"&gt;&amp;euro;&lt;/abbr&gt; &lt;span class="amount"&gt;123.45&lt;/span&gt; &lt;abbr class="currency"&gt;EUR&lt;/abbr&gt;
+      </code></pre>
+    </p>
+
+    <p>
+      Configure once, then run as many times you want:
+      <pre><code>
+jQuery.currency.configure({
+  // Configure rates and default settings
+  rates: {
+    // Object containing exchange rates from the base currency (EUR by default)
+    "USD": 1.2491,
+    "GBP": 0.8032
+  }
+});
+
+jQuery( ... ).currency("USD"); // Convert to USD
+      </code></pre>
+  </p>
+  </body>
+</html>
