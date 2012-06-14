@@ -155,8 +155,8 @@
                 } else {
                   if ( $el.html() && $el.html().match(/\S/) ) {
                     parsed = $el.html();
-                    return
-                  };
+                    return false;
+                  }
                 }
               });
 
