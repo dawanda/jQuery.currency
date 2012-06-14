@@ -10,7 +10,11 @@ Usage
 In order to parse currencies, `jQuery.currency` expects them to be formatted according to a microformat:
 
 ```html
-<span class="money"><abbr class="unit">&euro;</abbr><span class="amount">123.45</span><abbr class="currency">EUR</abbr></span>
+<span class="money">
+  <abbr class="unit">&euro;</abbr>
+  <span class="amount">123.45</span>
+  <abbr class="currency">EUR</abbr>
+</span>
 ```
 
 Then, it needs to know the exchange rates with respect to a base currency (by default EUR, if not specified). You can set both the rates and the base currency calling `jQuery.currency.configure`:
@@ -36,7 +40,8 @@ jQuery("#my_container").currency("USD")
 Changing the microformat
 ========================
 
-If you want, you can set a custom microformat. Just call the `jQuery.currency.configure` method with the description of your microformat. For example, if your microformat is this:
+If you want, you can set a custom microformat. Just call the `jQuery.currency.configure` method with the description of your microformat.
+For example, if you want your custom microformat to look like this:
 
 ```html
 <span class="cash">
