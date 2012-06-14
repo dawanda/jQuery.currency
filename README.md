@@ -7,13 +7,13 @@ jQuery.currency Plugin
 Usage
 =====
 
-In order to parse currencies, `jQuery.currency` expects them to be formatted according to a microformat:
+In order to parse currencies, `jQuery.currency` expects them to be formatted according to this microformat (the order of elements is irrelevant):
 
 ```html
 <span class="money">
   <abbr class="unit">&euro;</abbr>
   <span class="amount">123.45</span>
-  <abbr class="currency">EUR</abbr>
+  <abbr class="currency" title="EUR"></abbr>
 </span>
 ```
 
@@ -30,11 +30,15 @@ jQuery.currency.configure({
 })
 ```
 
-Now you are ready to go. To switch all the currencies in a container element to USD just do:
+Now you are ready to go. To switch all the currencies in a container element to **USD ($)** just do:
 
 ```javascript
 jQuery("#my_container").currency("USD")
 ```
+
+Every currency in `#my_container` will be magically converted to US Dollars. Yo!
+
+Note that `jQuery.currency` won't try to convert what it can't parse, so if you have currency not conforming to the microformat they simply won't be touched.
 
 
 Changing the microformat
@@ -84,6 +88,7 @@ jQuery("#my_container").currency("USD", {
   }
 })
 ```
+
 
 Callbacks
 =========
