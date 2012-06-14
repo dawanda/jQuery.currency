@@ -39,7 +39,11 @@ Changing the microformat
 If you want, you can set a custom microformat. Just call the `jQuery.currency.configure` method with the description of your microformat. For example, if your microformat is this:
 
 ```html
-<span class="cash"><abbr class="symbol" title="&euro;">&euro;</abbr><span class="number">123.45</span><abbr class="currency" title="EUR"></abbr></span>
+<span class="cash">
+  <abbr class="symbol" title="&euro;">&euro;</abbr>
+  <span class="number">123.45</span>
+  <abbr class="currency" title="EUR"></abbr>
+</span>
 ```
 
 You can set it as the default microformat with:
