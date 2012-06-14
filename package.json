@@ -1,8 +1,22 @@
 {
-  "author": "Luca Ongaro (www.lucaongaro.eu)",
+  "author": "DaWanda GmbH <luca@dawanda.com> (http://dawanda.com)",
+  "contributors": [
+    {
+      "name": "Luca Ongaro",
+      "email": "mail@lucaongaro.eu"
+    },
+    {
+      "name": "Steffen Schröder",
+      "email": "steffen@schroeder-blog.de"
+    }
+  ],
   "name": "jquery.currency",
   "description": "Change currency on the fly",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dawanda/jQuery.currency.git"
+  },
   "dependencies": {
     "buster": "~0.5.0"
   },
@@ -11,6 +25,7 @@
   "engines": {
     "node": "*"
   },
+  "main": "src/jquery.currency.js",
   "scripts": {
     "test": "java -jar dist/compiler.jar src/*.js --js_output_file=dist/jquery.`pwd|sed -e 's/.*jquery\\.//'`.min.js && node_modules/.bin/buster-test"
   }
