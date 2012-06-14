@@ -15,7 +15,8 @@
             value: ["title", "content"]
           },
           unit: {
-            selector: "abbr.unit"
+            selector: "abbr.unit",
+            value: ["title", "content"]
           }
         },
         symbols: {
