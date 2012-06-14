@@ -5,7 +5,18 @@
         beforeConvert: false,
         afterConvert: false,
         baseCurrency: "EUR",
-        moneyClass: "money",
+        microformat: {
+          selector: "span.money",
+          amount: {
+            selector: "span.amount"
+          },
+          currency: {
+            selector: "abbr.currency"
+          },
+          unit: {
+            selector: "abbr.unit"
+          }
+        },
         symbols: {
           "ALL": 'Lek',
           "ARS": '$',
@@ -90,26 +101,8 @@
           "ZWD": 'Z$'
         },
         rates: {},
-        formatNumber: function( number ) {
+        formatNumber: function( number, currency ) {
           return number.toFixed(2);
-        },
-        parse: function( $elem ) {
-          var amount = parseFloat( $elem.data("amount") || $elem.find(".amount").text() );
-          if ( isNaN( amount ) ) {
-            return null;
-          } else {
-            return {
-              amount: amount,
-              currency: $elem.data("currency") || $elem.find(".currency").text(),
-              unit: $elem.data("unit") || $elem.find(".unit").text()
-            };
-          }
-        },
-        update: function( $elem, data ) {
-          $elem.find(".amount").html( $.currency.formatNumber( data.amount ) );
-          $elem.find(".currency").html( data.currency );
-          $elem.find(".unit").html( data.unit );
-          $elem.data( data );
         }
       };
 
@@ -122,33 +115,75 @@
           return rate2 / rate1;
         }
       },
+
       convert: function( amount, fromCurrency, toCurrency ) {
         var rate = parseFloat( $.currency.getRate( fromCurrency, toCurrency ) );
         return isNaN( rate ) ? false : amount * rate;
       },
+
       getSymbol: function( currency ) {
         return defaults.symbols[ currency ];
       },
+
       configure: function( configs ) {
         defaults = $.extend( defaults, configs );
         return defaults;
       },
+
       getDefaults: function() {
         return defaults;
       },
-      formatNumber: defaults.formatNumber,
-      parse: defaults.parse,
-      update: defaults.update
+
+      parse: function( $elem, microformat ) {
+        var parseOne = function( key ) {
+              var mf = $.extend( {}, defaults.microformat, microformat ),
+                  $el = $elem.find( mf[ key ].selector );
+              if ( mf[ key ].value && mf[ key ].value !== "content" ) {
+                return $elem.data( key ) || $el.attr( mf[ key ].value );
+              } else {
+                return $elem.data( key ) || $el.html();
+              }
+            },
+            amount = parseFloat( parseOne("amount") );
+        if ( isNaN( amount ) ) {
+          return null;
+        } else {
+          return {
+            amount: amount,
+            currency: parseOne("currency"),
+            unit: parseOne("unit")
+          };
+        }
+      },
+
+      update: function( $elem, data, microformat ) {
+        var updateOne = function( key, value ) {
+          var mf = $.extend( {}, defaults.microformat, microformat ),
+              $el = $elem.find( mf[ key ].selector );
+          if ( mf[ key ].value && mf[ key ].value !== "content" ) {
+            $el.attr( mf[ key ].value, value );
+          } else {
+            $el.html( value );
+          }
+        };
+        updateOne( "amount", $.currency.formatNumber( data.amount, data.currency ) );
+        updateOne( "currency", data.currency );
+        updateOne( "unit", data.unit );
+        $elem.data( data );
+      },
+
+      formatNumber: defaults.formatNumber
     }
   });
 
   $.fn.currency = function( currency, options ) {
-    this.find( "." + defaults.moneyClass ).andSelf().filter( "." + defaults.moneyClass ).each(function() {
+    var settings = $.extend( {}, settings, defaults, options );
+
+    this.find( settings.microformat.selector ).andSelf().filter( settings.microformat.selector ).each(function() {
       var convertedAmount,
-          settings = $.extend( {}, settings, defaults, options ),
           self = this,
           $this = $( this ),
-          data = $.currency.parse( $this );
+          data = $.currency.parse( $this, settings.microformat );
 
       convertedAmount = data ? $.currency.convert( data.amount, data.currency || settings.baseCurrency, currency ) : null;
 
@@ -163,7 +198,7 @@
           unit: settings.symbol || $.currency.getSymbol( currency ) || ""
         };
 
-        $.currency.update( $this, data );
+        $.currency.update( $this, data, settings.microformat );
       
         if ( $.isFunction( settings.afterConvert ) ) {
           settings.afterConvert( self, arguments );

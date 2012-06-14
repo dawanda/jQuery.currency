@@ -83,6 +83,34 @@ describe('jquery.currency', function() {
     expect( spy ).toHaveBeenCalledWith( 1234.56, "XXX", "USD" );
   });
 
+  it('should use a custom microformat, if specified', function() {
+    var spy = this.spy(),
+        elem = jQuery('<span class="cash"><span class="unit">&euro;</span> <span class="value">1234.56</span> <abbr class="currency" title="XXX"></abbr></span>');
+
+    this.stub(jQuery.currency, "getRate", function() {
+      return 2;
+    });
+
+    this.stub(jQuery.currency, "convert", spy);
+    elem.currency("USD", {
+      microformat: {
+        selector: "span.cash",
+        amount: {
+          selector: "span.value"
+        },
+        currency: {
+          selector: "abbr.currency",
+          value: "title"
+        },
+        unit: {
+          selector: "span.unit"
+        }
+      }
+    });
+
+    expect( spy ).toHaveBeenCalledWith( 1234.56, "XXX", "USD" );
+  });
+
   it('should update the currency to the desired one', function() {
     this.stub(jQuery.currency, "getRate", function() {
       return 1;
