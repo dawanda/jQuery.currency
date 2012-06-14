@@ -39,25 +39,28 @@ Changing the microformat
 If you want, you can set a custom microformat. Just call the `jQuery.currency.configure` method with the description of your microformat. For example, if your microformat is this:
 
 ```html
-<span class="cash"><abbr class="symbol">&euro;</abbr><span class="number">123.45</span><abbr class="currency" title="EUR"></abbr></span>
+<span class="cash"><abbr class="symbol" title="&euro;">&euro;</abbr><span class="number">123.45</span><abbr class="currency" title="EUR"></abbr></span>
 ```
 
-You can set the default microformat with:
+You can set it as the default microformat with:
 
 ```javascript
 jQuery.currency.configure({
   microformat: {
-    selector: "span.cash",        // The jQuery selector of the whole microformat
+    selector: "span.cash",            // The jQuery selector of the whole microformat
     amount: {
-      selector: "span.number"     // The jQuery selector of the amount field
+      selector: "span.number",        // The jQuery selector of the amount field
+      value: "content"                // The amount value can be found in the tag's content
     },
     currency: {
-      selector: "abbr.currency",  // The jQuery selector of the currency field
-      value: "title"              // By default the value is assumed to be in the tag's content. If instead it is found in
-                                  // an attribute (title in this case), you can specify it with the value key
+      selector: "abbr.currency",      // The jQuery selector of the currency field
+      value: "title"                  // The currency value can be found in the tag's title attribute
     },
     unit: {
-      selector: "abbr.symbol"
+      selector: "abbr.symbol",
+      value: [ "title", "content" ]   // If 'value' is an array, each location in the array is searched in order.
+                                      // In this case, the unit value will be looked for in the title attribute first, then
+                                      // in the tag's content.
     }
   }
 })

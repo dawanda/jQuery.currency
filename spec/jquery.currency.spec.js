@@ -41,7 +41,7 @@ describe('jquery.currency.parse', function() {
 
 describe('jquery.currency', function() {
   before(function() {
-    this.element = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency">EUR</abbr></span>').appendTo(jQuery('body'));
+    this.element = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency" title="EUR">EUR</abbr></span>').appendTo(jQuery('body'));
   });
 
   it('should maintain chainability', function() {
@@ -111,6 +111,64 @@ describe('jquery.currency', function() {
     expect( spy ).toHaveBeenCalledWith( 1234.56, "XXX", "USD" );
   });
 
+  it('should accept array as the value in microformat', function() {
+    var spy = this.spy(),
+        elem = jQuery('<span class="money"><abbr class="unit"></abbr> <span class="amount" title="4321"></span> <abbr class="currency" title="YYY">XXX</abbr></span>');
+
+    this.stub(jQuery.currency, "getRate", function() {
+      return 2;
+    });
+
+    this.stub( jQuery.currency, "convert", spy );
+
+    elem.currency("USD", {
+      microformat: {
+        selector: "span.money",
+        amount: {
+          selector: "span.amount",
+          value: ["content", "title"]
+        },
+        currency: {
+          selector: "abbr.currency",
+          value: ["title", "content"]
+        },
+        unit: {
+          selector: "abbr.unit"
+        }
+      }
+    });
+
+    expect( spy ).toHaveBeenCalledWith( 4321, "YYY", "USD" );
+  });
+
+  it('should update the element according to the microformat', function() {
+    var elem = jQuery('<span class="money"><abbr class="unit"></abbr> <span class="amount">4321</span> <abbr class="currency" title="XXX"></abbr></span>');
+
+    this.stub(jQuery.currency, "getRate", function() {
+      return 1;
+    });
+
+    elem.currency("USD", {
+      microformat: {
+        selector: "span.money",
+        amount: {
+          selector: "span.amount",
+          value: ["content", "title"]
+        },
+        currency: {
+          selector: "abbr.currency",
+          value: ["content", "title"]
+        },
+        unit: {
+          selector: "abbr.unit"
+        }
+      }
+    });
+
+    expect( elem.find(".amount").html() ).toBe( "4321.00" );
+    expect( elem.find(".currency").attr("title") ).toBe( "USD" );
+  });
+
   it('should update the currency to the desired one', function() {
     this.stub(jQuery.currency, "getRate", function() {
       return 1;
@@ -128,11 +186,12 @@ describe('jquery.currency', function() {
   });
 
   it('should maintain the format', function() {
+    var elem = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.56</span> <abbr class="currency" title="EUR"></abbr></span>').appendTo(jQuery('body'));
     this.stub(jQuery.currency, "getRate", function() {
       return 1;
     });
 
-    expect( this.element.currency("USD").html() ).toEqual( '<abbr class="unit">$</abbr> <span class="amount">1234.56</span> <abbr class="currency">USD</abbr>' );
+    expect( elem.currency("USD").html() ).toEqual( '<abbr class="unit">$</abbr> <span class="amount">1234.56</span> <abbr class="currency" title="USD"></abbr>' );
   });
 
   it('should not change default configurations when temporary options are passed', function() {

@@ -11,7 +11,8 @@
             selector: "span.amount"
           },
           currency: {
-            selector: "abbr.currency"
+            selector: "abbr.currency",
+            value: ["title", "content"]
           },
           unit: {
             selector: "abbr.unit"
@@ -134,15 +135,31 @@
         return defaults;
       },
 
-      parse: function( $elem, microformat ) {
-        var parseOne = function( key ) {
-              var mf = $.extend( {}, defaults.microformat, microformat ),
-                  $el = $elem.find( mf[ key ].selector );
-              if ( mf[ key ].value && mf[ key ].value !== "content" ) {
-                return $elem.data( key ) || $el.attr( mf[ key ].value );
-              } else {
-                return $elem.data( key ) || $el.html();
-              }
+      parse: function( $elem, options ) {
+        var settings = $.extend( {}, defaults, options ),
+            parseOne = function( key ) {
+              var mf = settings.microformat,
+                  $el = $elem.find( mf[ key ].selector ),
+                  values = $.isArray( mf[ key ].value ) ? mf[ key ].value : [ mf[ key ].value ],
+                  parsed = null;
+
+              if ( $elem.data( key ) ) { return $elem.data( key ); }
+
+              $.each( values, function( idx, value ) {
+                if ( value && value !== "content" ) {
+                  if ( $el.attr( value ) ) {
+                    parsed = $el.attr( value );
+                    return false;
+                  }
+                } else {
+                  if ( $el.html() && $el.html().match(/\S/) ) {
+                    parsed = $el.html();
+                    return
+                  };
+                }
+              });
+
+              return parsed;
             },
             amount = parseFloat( parseOne("amount") );
         if ( isNaN( amount ) ) {
@@ -156,19 +173,24 @@
         }
       },
 
-      update: function( $elem, data, microformat ) {
-        var updateOne = function( key, value ) {
-          var mf = $.extend( {}, defaults.microformat, microformat ),
-              $el = $elem.find( mf[ key ].selector );
-          if ( mf[ key ].value && mf[ key ].value !== "content" ) {
-            $el.attr( mf[ key ].value, value );
-          } else {
-            $el.html( value );
-          }
-        };
+      update: function( $elem, data, options ) {
+        var settings = $.extend( {}, defaults, options ),
+            updateOne = function( key, value ) {
+              var mf = settings.microformat,
+                  $el = $elem.find( mf[ key ].selector ),
+                  values = $.isArray( mf[ key ].value ) ? mf[ key ].value : [ mf[ key ].value ];
+
+              $.each( values, function( idx, v ) {
+                if ( v && v !== "content" && $el.attr( v ) && $el.attr( v ).match(/\S/) ) {
+                  $el.attr( v, value );
+                } else if ( $el.html() && $el.html().match(/\S/) ) {
+                  $el.html( value );
+                }
+              });
+            };
         updateOne( "amount", $.currency.formatNumber( data.amount, data.currency ) );
-        updateOne( "currency", data.currency );
-        updateOne( "unit", data.unit );
+        if ( data.currency ) { updateOne( "currency", data.currency ); }
+        if ( data.currency ) { updateOne( "unit", data.unit ); }
         $elem.data( data );
       },
 
@@ -183,7 +205,7 @@
       var convertedAmount,
           self = this,
           $this = $( this ),
-          data = $.currency.parse( $this, settings.microformat );
+          data = $.currency.parse( $this, settings );
 
       convertedAmount = data ? $.currency.convert( data.amount, data.currency || settings.baseCurrency, currency ) : null;
 
@@ -198,7 +220,7 @@
           unit: settings.symbol || $.currency.getSymbol( currency ) || ""
         };
 
-        $.currency.update( $this, data, settings.microformat );
+        $.currency.update( $this, data, settings );
       
         if ( $.isFunction( settings.afterConvert ) ) {
           settings.afterConvert( self, arguments );
