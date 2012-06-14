@@ -1,7 +1,7 @@
 jQuery.currency Plugin
 ======================
 
-`jQuery.currency` lets you change currencies on the fly on web pages.
+`jQuery.currency` lets you change currencies on the fly on web pages. Oh yes, it does.
 
 
 Usage
@@ -17,7 +17,7 @@ In order to parse currencies, `jQuery.currency` expects them to be formatted acc
 </span>
 ```
 
-Then, it needs to know the exchange rates with respect to a base currency (by default EUR, if not specified). You can set both the rates and the base currency calling `jQuery.currency.configure`:
+Then, it needs to know the exchange rates with respect to a base currency (by default **EUR**, if not specified). You can set both the rates and the base currency calling `jQuery.currency.configure`:
 
 ```javascript
 jQuery.currency.configure({
@@ -44,8 +44,9 @@ Note that `jQuery.currency` won't try to convert what it can't parse, so if you 
 Changing the microformat
 ========================
 
-If you want, you can set a custom microformat. Just call the `jQuery.currency.configure` method with the description of your microformat.
-For example, if you want your custom microformat to look like this:
+It is very easy to change the microformat if you don't like the default one. Just pass to the `jQuery.currency.configure` method a description of your custom microformat.
+
+As an example, if you want your custom microformat to look like this:
 
 ```html
 <span class="cash">
