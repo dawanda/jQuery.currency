@@ -38,7 +38,7 @@ jQuery("#my_container").currency("USD")
 
 Every currency in `#my_container` will be magically converted to US Dollars. Yo!
 
-Note that `jQuery.currency` won't try to convert what it can't parse, so if you have currency not conforming to the microformat they simply won't be touched.
+Note that `jQuery.currency` won't try to convert what it can't parse: if you have currency with an invalid `amount`, it simply won't be touched. The `currency` and `unit` fields are instead optional: if a currency has a valid `amount` and no `currency`, it is assumed to be the `baseCurrency`.
 
 
 Changing the microformat

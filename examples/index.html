@@ -47,6 +47,12 @@
         <span class="amount">345.12</span>
         <abbr class="currency" title="USD"></abbr>
       </span>
+      <br>
+      <span class="money">
+        <abbr class="unit">&yen;</abbr>
+        <span class="amount">5432.10</span>
+        <abbr class="currency" title="JPY"></abbr>
+      </span>
     </p>
     <p>
       <button class="convert" data-to-currency="USD">Convert all to USD ($)</button>
@@ -75,7 +81,8 @@ jQuery.currency.configure({
   rates: {
     // Object containing exchange rates from the base currency (EUR by default)
     "USD": 1.2491,
-    "GBP": 0.8032
+    "GBP": 0.8032,
+    "JPY": 99.8494
   }
 });
 
