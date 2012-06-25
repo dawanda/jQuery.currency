@@ -105,8 +105,12 @@
           "ZWD": 'Z$'
         },
         rates: {},
-        formatNumber: function( number, currency ) {
-          return number.toFixed(2);
+        parseAmount: function( amountString ) {
+          return parseFloat( amountString );
+        },
+        formatAmount: function( number, data ) {
+          var precision = data && parseInt( data.precision );
+          return number.toFixed( isNaN( precision ) ? 2 : precision );
         }
       };
 
@@ -130,6 +134,9 @@
       },
 
       configure: function( configs ) {
+        if ( configs && configs.symbols ) {
+          configs.symbols = $.extend({}, defaults.symbols, configs.symbols);
+        }
         defaults = $.extend( defaults, configs );
         return defaults;
       },
@@ -164,14 +171,15 @@
 
               return parsed;
             },
-            amount = parseFloat( parseOne("amount") );
+            amount = defaults.parseAmount( parseOne("amount") );
         if ( isNaN( amount ) ) {
           return null;
         } else {
           return {
             amount: amount,
             currency: parseOne("currency"),
-            unit: parseOne("unit")
+            unit: parseOne("unit"),
+            precision: $elem.data("precision") || ( ( amount + "" ).match(/\..+$/) || [".00"] )[0].length - 1
           };
         }
       },
@@ -191,13 +199,13 @@
                 }
               });
             };
-        updateOne( "amount", $.currency.formatNumber( data.amount, data.currency ) );
-        if ( data.currency ) { updateOne( "currency", data.currency ); }
-        if ( data.currency ) { updateOne( "unit", data.unit ); }
         $elem.data( data );
+        updateOne( "amount", $.currency.formatAmount( data.amount, $elem.data() ) );
+        if ( data.currency ) { updateOne( "currency", data.currency ); }
+        if ( data.unit ) { updateOne( "unit", data.unit ); }
       },
 
-      formatNumber: defaults.formatNumber
+      formatAmount: defaults.formatAmount
     }
   });
 
@@ -205,7 +213,7 @@
     var settings = $.extend( {}, settings, defaults, options );
 
     this.find( settings.microformat.selector ).andSelf().filter( settings.microformat.selector ).each(function() {
-      var convertedAmount,
+      var convertedAmount, precision,
           self = this,
           $this = $( this ),
           data = $.currency.parse( $this, settings );
@@ -217,11 +225,11 @@
           settings.beforeConvert( self, arguments );
         }
 
-        data = {
+        $.extend( data, {
           amount: convertedAmount,
           currency: currency,
           unit: settings.symbol || $.currency.getSymbol( currency ) || ""
-        };
+        });
 
         $.currency.update( $this, data, settings );
       

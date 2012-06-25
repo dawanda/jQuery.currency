@@ -31,6 +31,14 @@ describe('jquery.currency.configure', function() {
     expect( jQuery.currency.configure({ foo: "bar" }).foo ).toBe("bar");
     expect( jQuery.currency.getDefaults().foo ).toBe("bar");
   });
+
+  it('should merge symbols, not override them', function() {
+    var originalSymbols = jQuery.currency.getDefaults().symbols,
+        symbols = jQuery.currency.configure({
+          symbols: { "ZYX": "zyx" }
+        }).symbols;
+    expect( symbols ).toEqual( jQuery.extend( originalSymbols, symbols ) );
+  });
 });
 
 describe('jquery.currency.parse', function() {
@@ -260,8 +268,8 @@ describe('jquery.currency', function() {
         "GBP": 0.85
       }
     });
-    expect( this.element.currency("USD").find(".amount").text() ).toEqual( jQuery.currency.formatNumber( 1234.56 * 1.25 ) + "" );
-    expect( this.element.currency("GBP").find(".amount").text() ).toEqual( jQuery.currency.formatNumber( 1234.56 * 0.85 ) + "" );
+    expect( this.element.currency("USD").find(".amount").text() ).toEqual( jQuery.currency.formatAmount( 1234.56 * 1.25 ) + "" );
+    expect( this.element.currency("GBP").find(".amount").text() ).toEqual( jQuery.currency.formatAmount( 1234.56 * 0.85 ) + "" );
   });
 
   it('should not do anything if parse fails', function() {
@@ -276,5 +284,17 @@ describe('jquery.currency', function() {
     });
 
     expect( this.element.currency("GBP").html() ).toEqual( $copy.html() );
+  });
+
+  it('should preserve precision', function() {
+    var elem1 = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">12.345</span> <abbr class="currency">EUR</abbr></span>'),
+        elem2 = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.5</span> <abbr class="currency">EUR</abbr></span>');;
+
+    this.stub(jQuery.currency, "getRate", function() {
+      return 1;
+    });
+
+    expect( elem1.currency("GBP").find(".amount").text() ).toEqual( "12.345" );
+    expect( elem2.currency("GBP").find(".amount").text() ).toEqual( "1234.5" );
   });
 });
