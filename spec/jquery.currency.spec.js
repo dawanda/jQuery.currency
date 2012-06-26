@@ -286,15 +286,23 @@ describe('jquery.currency', function() {
     expect( this.element.currency("GBP").html() ).toEqual( $copy.html() );
   });
 
-  it('should preserve precision', function() {
-    var elem1 = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">12.345</span> <abbr class="currency">EUR</abbr></span>'),
-        elem2 = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.5</span> <abbr class="currency">EUR</abbr></span>');;
+  it('should preserve precision if > 2 decimals', function() {
+    var elem1 = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">12.345</span> <abbr class="currency">EUR</abbr></span>');
 
     this.stub(jQuery.currency, "getRate", function() {
       return 1;
     });
 
     expect( elem1.currency("GBP").find(".amount").text() ).toEqual( "12.345" );
-    expect( elem2.currency("GBP").find(".amount").text() ).toEqual( "1234.5" );
+  });
+
+  it('should have precision of 2 decimals if the original precision is lower than 2', function() {
+    var elem = jQuery('<span class="money"><abbr class="unit">&euro;</abbr> <span class="amount">1234.5</span> <abbr class="currency">EUR</abbr></span>');
+
+    this.stub(jQuery.currency, "getRate", function() {
+      return 1;
+    });
+
+    expect( elem.currency("GBP").find(".amount").text() ).toEqual( "1234.50" );
   });
 });

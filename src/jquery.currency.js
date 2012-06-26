@@ -110,7 +110,7 @@
         },
         formatAmount: function( number, data ) {
           var precision = data && parseInt( data.precision );
-          return number.toFixed( isNaN( precision ) ? 2 : precision );
+          return number.toFixed( ( isNaN( precision ) || precision < 2 ) ? 2 : precision );
         }
       };
 
