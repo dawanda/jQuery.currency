@@ -115,3 +115,16 @@ jQuery("#my_container").currency("USD", {
 ```
 
 They will be called with the microformat html element as the first argument, and an array of all the arguments passed to the `jQuery( ... ).currency()` method call as the second argument.
+
+
+Utilities
+=========
+
+The `jQuery.currency` object exposes some useful utility methods:
+
+  * `jQuery.currency.getRate( fromCurrency, toCurrency )` returns the exchange rate from `fromCurrency` to `toCurrency` (currency specified by their ISO code)
+  * `jQuery.currency.convert( amount, fromCurrency, toCurrency )` converts `amount` from `fromCurrency` to `toCurrency`
+  * `jQuery.currency.getSymbol( currency )` returns the symbol for `currency`
+  * `jQuery.currency.getDefaults()` returns an object containing the current default configurations (rates, base currency, symbols, microformat...)
+  * `jQuery.currency.parse( $elem, options )` parse `$elem` (which must be a jQuery selection) and parse the currency, returning an object like `{ amount: 10, currency: "EUR", unit: "&euro;", precision: 2 }`. With `option` you can override the default configurations.
+  * `jQuery.currency.update( $elem, data, options )` updates `$elem` (if it is a microformatted currency) setting its currency according to data (e.g.: `{ amount: 20, currency: "USD", unit: "$", precision: 2 }`)
