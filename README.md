@@ -128,3 +128,7 @@ The `jQuery.currency` object exposes some useful utility methods:
   * `jQuery.currency.getDefaults()` returns an object containing the current default configurations (rates, base currency, symbols, microformat...)
   * `jQuery.currency.parse( $elem, options )` parse `$elem` (which must be a jQuery selection) and parse the currency, returning an object like `{ amount: 10, currency: "EUR", unit: "&euro;", precision: 2 }`. With `option` you can override the default configurations.
   * `jQuery.currency.update( $elem, data, options )` updates `$elem` (if it is a microformatted currency) setting its currency according to data (e.g.: `{ amount: 20, currency: "USD", unit: "$", precision: 2 }`)
+
+## License
+
+Hereby placed under MIT license.
