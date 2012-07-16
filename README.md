@@ -46,6 +46,25 @@ Changing the microformat
 
 It is very easy to change the microformat if you don't like the default one. Just pass to the `jQuery.currency.configure` method a description of your custom microformat.
 
+The description of the default microformat is the following:
+
+```javascript
+{
+  selector: "span.money",             // The jQuery selector of the whole microformat
+  amount: {
+    selector: "span.amount"           // The jQuery selector of the amount. The value is found in the tag's content
+  },
+  currency: {
+    selector: "abbr.currency",        // The jQuery selector of the currency
+    value: ["title", "content"]       // The currency value will be searched first in the tag's title attribute, then in the tag's content.
+  },
+  unit: {
+    selector: "abbr.unit",            // The jQuery selector of the unit
+    value: ["title", "content"]       // The unit value will be searched first in the tag's title attribute, then in the tag's content.
+  }
+}
+```
+
 As an example, if you want your custom microformat to look like this:
 
 ```html
@@ -63,17 +82,17 @@ jQuery.currency.configure({
   microformat: {
     selector: "span.cash",            // The jQuery selector of the whole microformat
     amount: {
-      selector: "span.number",        // The jQuery selector of the amount field
+      selector: "span.number",        // The jQuery selector of the amount
       value: "content"                // The amount value can be found in the tag's content
     },
     currency: {
-      selector: "abbr.currency",      // The jQuery selector of the currency field
+      selector: "abbr.currency",      // The jQuery selector of the currency
       value: "title"                  // The currency value can be found in the tag's title attribute
     },
     unit: {
       selector: "abbr.symbol",
       value: [ "title", "content" ]   // If 'value' is an array, each location in the array is searched in order.
-                                      // In this case, the unit value will be looked for in the title attribute first, then
+                                      // In this case, the unit value will be searched first in the title attribute, then
                                       // in the tag's content.
     }
   }
@@ -122,12 +141,12 @@ Utilities
 
 The `jQuery.currency` object exposes some useful utility methods:
 
-  * `jQuery.currency.getRate( fromCurrency, toCurrency )` returns the exchange rate from `fromCurrency` to `toCurrency` (currency specified by their ISO code)
+  * `jQuery.currency.getRate( fromCurrency, toCurrency )` returns the exchange rate from `fromCurrency` to `toCurrency` (e.g. `jQuery.currency.getRate( "EUR", "GBP" )`)
   * `jQuery.currency.convert( amount, fromCurrency, toCurrency )` converts `amount` from `fromCurrency` to `toCurrency`
   * `jQuery.currency.getSymbol( currency )` returns the symbol for `currency`
-  * `jQuery.currency.getDefaults()` returns an object containing the current default configurations (rates, base currency, symbols, microformat...)
+  * `jQuery.currency.getDefaults()` returns an object containing the current default configurations (exchange rates, base currency, symbols, microformat...)
   * `jQuery.currency.parse( $elem, options )` parse `$elem` (which must be a jQuery selection) and parse the currency, returning an object like `{ amount: 10, currency: "EUR", unit: "&euro;", precision: 2 }`. With `option` you can override the default configurations.
-  * `jQuery.currency.update( $elem, data, options )` updates `$elem` (if it is a microformatted currency) setting its currency according to data (e.g.: `{ amount: 20, currency: "USD", unit: "$", precision: 2 }`)
+  * `jQuery.currency.update( $elem, data, options )` expects `$elem` to be a jQuery selection of one or more microformatted currencies, and updates it according to data (e.g.: `jQuery.currency.update( $('#price'), { amount: 20, currency: "USD", unit: "$", precision: 2 } )`)
 
 ## License
 
